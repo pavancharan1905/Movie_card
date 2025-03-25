@@ -7,11 +7,8 @@ const api = axios.create({
   }, 
   headers: { 
     'Content-Type': 'application/json', 
-  }, 
+  }
 }); 
 
-export const getPopularMovies = () => api.get('/movie/popular'); 
 
-export const getTrendingMovies = () => api.get('/trending/movie/day'); 
-
-export default api; 
+  export default api;

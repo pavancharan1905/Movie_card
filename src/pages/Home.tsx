@@ -1,17 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'; 
 import { fetchPopularMovies, fetchTrendingMovies } from "../redux/MovieSlice";
 import { RootState, AppDispatch } from "../redux/store"; 
-
-interface Movie{
-    id:number;
-    title:string;
-    poster_path:string,
-}
+import MovieCard from '../component/Moviecard';
+import { useEffect } from 'react';
+import { getAccordionDetailsUtilityClass } from '@mui/material';
 
 function Home() { 
   const Dispatch = useDispatch<AppDispatch>(); 
   const { popularMovis, trendingMovies,error,loading } = useSelector(
-    (state: RootState) => state.movies); 
+    (state: RootState) => state.movie); 
   useEffect(() => { 
     Dispatch(fetchPopularMovies()); 
     Dispatch(fetchTrendingMovies()); 
@@ -27,29 +24,30 @@ function Home() {
   return ( 
     <div> 
       <h2>Popular Movies</h2> 
-      <div> 
-        {popularMovis.map((movie: Movie) => ( 
+      <div style={gridStyle}> 
+        {popularMovis.map((movie: any) => ( 
           <div key={movie.id}>
-                <h2> {movie.title}</h2>
-                <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt={movie.title}/>
-
+                <MovieCard movie={movie}/>
             </div> 
         ))} 
      </div>
      <h1> Trending Movies</h1>
-     <div>
-     {trendingMovies.map((movie: Movie)=> (
-            <div key={movie.id}>
-                <h2>{movie.title}</h2>
-                <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt={movie.title}/>
-                </div>
+     <div style={gridStyle}>
+     {trendingMovies.map((movie: any)=> (
+            <MovieCard key={movie.id} movie={movie}/>
    
         ))}
 
         </div>
 </div>  
-)   
+);  
+};
 
-}
+const gridStyle={
+  display:'grid',
+  gridTemplateColumn:'repeat(4, 1fr)',
+  gap:'16px',
+  padding:'0 16px',
+};
 
 export default Home; 

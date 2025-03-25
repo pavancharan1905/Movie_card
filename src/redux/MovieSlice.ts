@@ -8,15 +8,15 @@ interface Movie{
 } 
 
 interface MovieState { 
-  popularMovies: [], 
-  trendingMovies: [], 
-  loading: false, 
+  popularMovis: Movie[], 
+  trendingMovies: Movie[], 
+  loading: boolean, 
   error: string|null
 }
 
 
 const initialState: MovieState = { 
-    popularMovies: [], 
+    popularMovis: [], 
     trendingMovies: [], 
     loading: false, 
     error: null, 
@@ -25,7 +25,7 @@ const initialState: MovieState = {
 export const fetchPopularMovies = createAsyncThunk( 
   'movies/fetchPopularMovies', 
   async () => { 
-    const response = await api.get('/movie/popular'); 
+    const response = await api.get('/movie/popular') 
     return response.data
   } 
 )
@@ -33,30 +33,38 @@ export const fetchPopularMovies = createAsyncThunk(
 export const fetchTrendingMovies = createAsyncThunk( 
   'movies/fetchTrendingMovies', 
   async () => { 
-    const res=await api.get('/movie/trending/day')
+    const res=await api.get('/movie/top_rated')
     return res.data
   } 
 )
 
 const movieSlice = createSlice({ 
     name: 'movies', 
-    initialState, 
+    initialState:initialState, 
     reducers: {}, 
     extraReducers: (builder) => { 
     builder 
       .addCase(fetchPopularMovies.fulfilled,(state,action) => {
-        state.popularMovies=action.payload.results
+        state.popularMovis=action.payload.results
       }) 
       .addCase(fetchPopularMovies.rejected, (state, action) => { 
         state.error=action.error.message || "Error fetching popular movies"
-      
       }) 
       .addCase(fetchPopularMovies.pending, (state) => { 
         state.loading=true
       })
+      .addCase(fetchTrendingMovies.fulfilled,(state,action)=>{
+        state.trendingMovies=action.payload.results
+      })
+      .addCase(fetchTrendingMovies.rejected,(state,action)=>{
+        state.error=action.error.message || "Error fetching trending movies"
+      })
+      .addCase(fetchTrendingMovies.pending,(state)=>{
+        state.loading=true
+      })
+
     }
 });
-
 
 export default movieSlice.reducer
 
