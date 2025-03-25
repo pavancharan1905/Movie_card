@@ -3,7 +3,7 @@ import { fetchPopularMovies, fetchTrendingMovies } from "../redux/MovieSlice";
 import { RootState, AppDispatch } from "../redux/store"; 
 import MovieCard from '../component/Moviecard';
 import { useEffect } from 'react';
-import { getAccordionDetailsUtilityClass } from '@mui/material';
+
 
 function Home() { 
   const Dispatch = useDispatch<AppDispatch>(); 
