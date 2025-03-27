@@ -1,11 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
-import Movieslice from "./MovieSlice"
+import  { configureStore } from "@reduxjs/toolkit";
+import MovieSlice from "./MovieSlice";
+
 
 export const store = configureStore({
-  reducer: {
-    movie:Movieslice
-  },
+    reducer: {
+        movie: MovieSlice
+    }
 });
-export type AppDispatch = typeof store.dispatch
-export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
 

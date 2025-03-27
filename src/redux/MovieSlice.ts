@@ -1,71 +1,78 @@
-import { createAsyncThunk,createSlice } from '@reduxjs/toolkit'; 
-import api from "../assets/utils/api"; 
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../assets/utils/api";
 
-interface Movie{ 
-  id:number,
-  title:string
-  poster_path:string
-} 
 
-interface MovieState { 
-  popularMovis: Movie[], 
-  trendingMovies: Movie[], 
-  loading: boolean, 
-  error: string|null
+interface Movie{
+    id:number,
+    title:string,
+    poster_path:string
+}
+interface MovieState{
+    popularMovies:Movie [],
+    trendingMovies:Movie [],
+    loading:boolean,
+    error:string|null
 }
 
 
-const initialState: MovieState = { 
-    popularMovis: [], 
-    trendingMovies: [], 
-    loading: false, 
-    error: null, 
-  }
 
-export const fetchPopularMovies = createAsyncThunk( 
-  'movies/fetchPopularMovies', 
-  async () => { 
-    const response = await api.get('/movie/popular') 
-    return response.data
-  } 
-)
-
-export const fetchTrendingMovies = createAsyncThunk( 
-  'movies/fetchTrendingMovies', 
-  async () => { 
-    const res=await api.get('/movie/top_rated')
-    return res.data
-  } 
-)
-
-const movieSlice = createSlice({ 
-    name: 'movies', 
-    initialState:initialState, 
-    reducers: {}, 
-    extraReducers: (builder) => { 
-    builder 
-      .addCase(fetchPopularMovies.fulfilled,(state,action) => {
-        state.popularMovis=action.payload.results
-      }) 
-      .addCase(fetchPopularMovies.rejected, (state, action) => { 
-        state.error=action.error.message || "Error fetching popular movies"
-      }) 
-      .addCase(fetchPopularMovies.pending, (state) => { 
-        state.loading=true
-      })
-      .addCase(fetchTrendingMovies.fulfilled,(state,action)=>{
-        state.trendingMovies=action.payload.results
-      })
-      .addCase(fetchTrendingMovies.rejected,(state,action)=>{
-        state.error=action.error.message || "Error fetching trending movies"
-      })
-      .addCase(fetchTrendingMovies.pending,(state)=>{
-        state.loading=true
-      })
-
+export const fetchPopularMovies = createAsyncThunk(
+    'movie/fetchPopularMovies',
+    async () => {
+        const response = await api.get('/movie/popular');
+        return response.data;
     }
+);
+
+export const fetchTrendingMovies = createAsyncThunk(
+    'movie/fetchTrendingMovies',
+    async () => {
+        const res = await api.get('/trending/movie/day');
+        return res.data;
+    }
+);
+
+
+const initialState: MovieState = {
+    popularMovies: [],
+    trendingMovies: [],
+    loading: false,
+    error: null,
+};
+
+const MovieSlice = createSlice({
+    name: 'movie',
+    initialState: initialState,
+    reducers: {},
+
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPopularMovies.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchPopularMovies.fulfilled, (state, action) => {
+                state.loading = false;
+                state.popularMovies = action.payload.results;
+                state.error = null;
+            })
+            .addCase(fetchPopularMovies.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || "Error fetching popular movies";
+            })
+            .addCase(fetchTrendingMovies.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchTrendingMovies.fulfilled, (state, action) => {
+                state.loading = false;
+                state.trendingMovies = action.payload.results;
+                state.error = null;
+            })
+            .addCase(fetchTrendingMovies.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || "Error fetching trending movies";
+            });
+    },
 });
 
-export default movieSlice.reducer
 
-
+export default MovieSlice.reducer
