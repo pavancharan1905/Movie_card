@@ -5,7 +5,7 @@ import { Card, CardContent,Typography,CardMedia } from '@mui/material';
 interface Movie {
     title: string;
     poster_path: string;
-    Vote_average: number | null;
+    vote_average: number | null;
      
 }
 
@@ -37,7 +37,7 @@ const Moviecard: React.FC<MovieCardProps> = ({ movie }) => {
           image={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
             alt={movie.title}
             sx={{
-                height: 350,
+                height: 550,
                 objectFit: 'cover',
                 width:'100%'
             }}
@@ -45,19 +45,20 @@ const Moviecard: React.FC<MovieCardProps> = ({ movie }) => {
             />
 
 
-<CardContent sx={{ flexGrow: 1, padding: 1 }}> //[pause]
-        <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold' }}> //[pause]
-          {movie.title} //[pause]
-        </Typography> //[pause]
-        <Typography variant="body2" color="text.secondary"> //[pause]
-          Rating: {movie.Vote_average ? movie.Vote_average.toFixed(1) : 'N/A'} / 10 //[pause]
-        </Typography> //[pause]
-      </CardContent> //[pause]
+<CardContent sx={{ flexGrow: 1, padding: 1 }}> 
+        <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold' }}> 
+          {movie.title} 
+        </Typography> 
+        <Typography variant="body2" color="text.secondary"> 
+          Rating: {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'} 
+        </Typography> 
+      </CardContent> 
     </Card> 
   ); 
 }
 
 export default Moviecard;
+
 
 
       

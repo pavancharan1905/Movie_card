@@ -1,8 +1,9 @@
 import { fetchPopularMovies, fetchTrendingMovies } from "../redux/MovieSlice";
 import { useDispatch, useSelector } from 'react-redux'; 
-import { RootState, AppDispatch } from '../redux/store' 
+import { RootState, AppDispatch } from '../redux/store';
 import { useEffect } from 'react';
-import MovieCard from "../component/Moviecard" ;
+import MovieCard from "../component/Moviecard";
+
 
 
 
@@ -48,3 +49,4 @@ const gridStyle = {
 }; 
 
 export default Home; 
+

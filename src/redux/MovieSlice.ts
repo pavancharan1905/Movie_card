@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../assets/utils/api";
 
 
@@ -10,10 +10,18 @@ interface Movie{
 interface MovieState{
     popularMovies:Movie [],
     trendingMovies:Movie [],
+    searchResults:Movie[];
     loading:boolean,
     error:string|null
 }
 
+const initialState: MovieState={
+    popularMovies:[],
+    trendingMovies:[],
+    searchResults:[],
+    loading:false,
+    error:null,
+};
 
 
 export const fetchPopularMovies = createAsyncThunk(
@@ -32,17 +40,20 @@ export const fetchTrendingMovies = createAsyncThunk(
     }
 );
 
+export const searchMoviesAsync=createAsyncThunk(
+    'movies/searchMovies',
+    async (query:string) => {
+        const response = await api.get(`/search/movie?query=${query}`);
+        return response.data.results;
+    }
+);
 
-const initialState: MovieState = {
-    popularMovies: [],
-    trendingMovies: [],
-    loading: false,
-    error: null,
-};
+
+
 
 const MovieSlice = createSlice({
     name: 'movie',
-    initialState: initialState,
+    initialState,
     reducers: {},
 
     extraReducers: (builder) => {
@@ -70,8 +81,19 @@ const MovieSlice = createSlice({
             .addCase(fetchTrendingMovies.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || "Error fetching trending movies";
-            });
+            })
+            .addCase(searchMoviesAsync.fulfilled,(state, action: PayloadAction<Movie[]>) => {
+              state.searchResults=action.payload  
+            })
+            .addCase(searchMoviesAsync.rejected, (state, action) =>{
+                state.loading = false;
+                state.error = action.error.message || 'Failed to fetch search results';
+            })
+            .addCase(searchMoviesAsync.pending, (state) => {
+                state.loading=true;
+            })
     },
+            
 });
 
 
