@@ -71,23 +71,20 @@ const Navbar:React.FC = () => {
                 </Box>
                 <IconButton
   sx={{
-    //bgcolor: "primary.main", 
-    color: "white", // White text/icon for contrast
+   
+    color: "white", 
     borderRadius: 1, 
-    px: 2, // Add padding for better clickability
+    px: 2, 
     py: 1, 
-    //"&:hover": {
-      //bgcolor: "primary.dark", // Darker shade on hover
-    //},
-    boxShadow: 2, // Add slight shadow for depth
+    boxShadow: 2, 
     display: "flex",
     alignItems: "center",
-    gap: 1, // Space between text and icon
+    gap: 1, 
   }}
   onClick={() => navigate("/watchlist")}
 >
   Watchlist
-  <BookmarkIcon sx={{ fontSize: 20 }} /> {/* Adjust icon size */}
+  <BookmarkIcon sx={{ fontSize: 20 }} /> {}
 </IconButton>
 
             </Toolbar>

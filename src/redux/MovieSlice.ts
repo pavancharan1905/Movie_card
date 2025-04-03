@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../assets/utils/api";
 
-// Define Movie Interface
+
 interface Movie {
   id: number;
   title: string;
@@ -9,7 +9,7 @@ interface Movie {
   vote_average: number;
 }
 
-// Define State Interface
+
 interface MovieState {
   trendingMovies: Movie[];
   popularMovies: Movie[];
@@ -19,7 +19,7 @@ interface MovieState {
   error: string | null;
 }
 
-// Initial State
+
 const initialState: MovieState = {
   trendingMovies: [],
   popularMovies: [],
@@ -29,7 +29,7 @@ const initialState: MovieState = {
   error: null,
 };
 
-// Async Thunks
+
 export const fetchTrendingMovies = createAsyncThunk(
   "movie/fetchTrendingMovies",
   async () => {
@@ -54,7 +54,7 @@ export const searchMoviesAsync = createAsyncThunk(
   }
 );
 
-// Movie Slice
+
 const MovieSlice = createSlice({
   name: "movie",
   initialState,

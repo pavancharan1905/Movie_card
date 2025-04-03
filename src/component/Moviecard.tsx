@@ -28,12 +28,12 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   const dispatch = useDispatch();
   const watchlist = useSelector((state: RootState) => state.movie.watchlist);
 
-  // Check if the movie is in the watchlist
+  
   const isInWatchlist = watchlist.some((m) => m.id === movie.id);
 
-  // Handle watchlist button click
+  
   const handleWatchlistClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevents triggering parent click events
+    e.stopPropagation(); 
     if (isInWatchlist) {
       dispatch(removeFromWatchlist(movie.id));
     } else {
@@ -55,7 +55,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         position: "relative",
       }}
     >
-      {/* Movie Poster */}
+      {}
       <CardMedia
         component="img"
         image={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
@@ -67,7 +67,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         }}
       />
 
-      {/* Movie Details */}
+      {}
       <CardContent sx={{ flexGrow: 1, padding: 1 }}>
         <Typography
           gutterBottom
@@ -87,7 +87,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         </Typography>
       </CardContent>
 
-      {/* Watchlist Toggle Button */}
+      {}
       <IconButton
         onClick={handleWatchlistClick}
         sx={{
