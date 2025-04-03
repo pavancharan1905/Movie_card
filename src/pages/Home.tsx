@@ -1,13 +1,13 @@
 import { fetchPopularMovies, fetchTrendingMovies } from "../redux/MovieSlice";
 import { useDispatch, useSelector } from 'react-redux'; 
-import { RootState, AppDispatch } from '../redux/store';
+import { RootState, AppDispatch } from '../redux/store' 
 import { useEffect } from 'react';
-import MovieCard from "../component/Moviecard";
+import MovieCard from "../component/Moviecard" ;
+import { Padding } from "@mui/icons-material";
 
 
 
-
-function Home(){
+const Home:React.FC=()=>{
   const Dispatch = useDispatch<AppDispatch>();
   const { popularMovies, trendingMovies, loading, error } = useSelector( 
     (state: RootState) => state.movie);
@@ -22,19 +22,19 @@ function Home(){
 
   return ( 
     <div> 
-      <h2>Popular Movies</h2> 
+    <h2 style={{padding:"25px"}}>Popular Movies</h2> 
       <div style={gridStyle}> 
         {popularMovies.map((movie: any) => ( 
+          <MovieCard key={movie.id} movie={movie} /> 
+        ))} 
+      </div> 
+      <h2 style={{padding:"10px"}}>Trending Movies</h2> 
+      <div style={gridStyle}> 
+        {trendingMovies.map((movie: any) => (   
+     
           <div key={movie.id}>
           <MovieCard key={movie.id} movie={movie} /> 
           </div>
-        ))} 
-      </div> 
-
-      <h2>Trending Movies</h2> 
-      <div style={gridStyle}> 
-        {trendingMovies.map((movie: any) => ( 
-          <MovieCard key={movie.id} movie={movie} /> 
         ))} 
       </div> 
     </div> 
@@ -48,5 +48,4 @@ const gridStyle = {
   padding: '0 16px', 
 }; 
 
-export default Home; 
-
+export default Home;
