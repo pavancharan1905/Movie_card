@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import { Container, Typography, Grid, GridLegacy } from '@mui/material';
 import { searchMoviesAsync } from '../redux/MovieSlice';
 import MovieCard from '../component/Moviecard';
-
 import { AppDispatch } from '../redux/store';
 
 

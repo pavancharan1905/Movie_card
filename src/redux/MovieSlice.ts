@@ -1,112 +1,183 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import api from "../assets/utils/api";
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import api from '../assets/utils/api';
 
-
+// Define the Movie and Genre types
 interface Movie {
   id: number;
   title: string;
   poster_path: string;
-  vote_average: number;
+  vote_average: number | null;
 }
 
+interface Genre {
+  id: number;
+  name: string;
+}
 
 interface MovieState {
-  trendingMovies: Movie[];
   popularMovies: Movie[];
-  watchlist: Movie[];
+  trendingMovies: Movie[];
   searchResults: Movie[];
+  watchlist: Movie[];
+  genres: Genre[];
+  genreMovies: Movie[];
+  selectedGenre: Genre | null;
   loading: boolean;
   error: string | null;
 }
 
-
 const initialState: MovieState = {
-  trendingMovies: [],
   popularMovies: [],
+  trendingMovies: [],
   searchResults: [],
   watchlist: [],
+  genres: [],
+  genreMovies: [],
+  selectedGenre: null,
   loading: false,
   error: null,
 };
 
-
-export const fetchTrendingMovies = createAsyncThunk(
-  "movie/fetchTrendingMovies",
+// Async actions using createAsyncThunk
+export const fetchGenres = createAsyncThunk<Genre[]>(
+  'movies/fetchGenres',
   async () => {
-    const res = await api.get("/trending/movie/day");
-    return res.data.results;
+    const response = await api.get('/genre/movie/list');
+    return response.data.genres;
   }
 );
 
-export const fetchPopularMovies = createAsyncThunk(
-  "movie/fetchPopularMovies",
+export const fetchGenreMovies=createAsyncThunk<Movie[],number>(
+    'movies/fetchGenreMovies',
+    async(movieID)=>{
+        const response=await api.get(`/discover/movie?with_genres=${movieID}`)
+        return response.data.results
+    }
+)
+
+export const searchMoviesAsync = createAsyncThunk<Movie[], string>(
+  'movies/search',
+  async (query:string) => {
+    const response = await api.get(`/search/movie?query=${query}`);
+    return response.data.results;
+  }
+);
+
+export const fetchPopularMovies = createAsyncThunk<Movie[]>(
+  'movies/fetchPopularMovies',
   async () => {
-    const res = await api.get("/movie/popular");
-    return res.data.results;
+    const response = await api.get('/movie/popular');
+    return response.data.results;
   }
 );
 
-export const searchMoviesAsync = createAsyncThunk(
-  "movies/searchMovies",
-  async (query: string) => {
-    const res = await api.get(`/search/movie?query=${query}`);
-    return res.data.results;
+export const fetchTrendingMovies = createAsyncThunk<Movie[]>(
+  'movies/fetchTrendingMovies',
+  async () => {
+    const response = await api.get('/trending/movie/week');
+    return response.data.results;
   }
 );
 
+export const fetchMoviesByGenre = createAsyncThunk<Movie[], number>(
+  'movies/fetchMoviesByGenre',
+  async (genreId) => {
+    const response = await api.get(`/discover/movie?with_genres=${genreId}`);
+    return response.data.results;
+  }
+);
 
-const MovieSlice = createSlice({
-  name: "movie",
+// Slice definition
+const movieSlice = createSlice({
+  name: 'movie',
   initialState,
   reducers: {
     addToWatchlist: (state, action: PayloadAction<Movie>) => {
-      if (!state.watchlist.some((movie) => movie.id === action.payload.id)) {
-        state.watchlist.push(action.payload);
+      if (!state.watchlist.find((movie) => movie.id === action.payload.id)) {
+        state.watchlist.push(action.payload)
       }
     },
-    removeFromWatchlist: (state, action: PayloadAction<number>) => {
-      state.watchlist = state.watchlist.filter((movie) => movie.id !== action.payload);
+    removeFromWatchlist: (state, action: PayloadAction<Movie>) => {
+      state.watchlist = state.watchlist.filter(
+        (movie) => movie.id !== action.payload.id
+      );
+    },
+    setSelectedGenre: (state, action: PayloadAction<Genre>) => {
+      state.selectedGenre = action.payload;
     },
   },
+
+
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTrendingMovies.pending, (state) => {
+      // Fetch genres
+      .addCase(fetchGenres.pending, (state) => {
         state.loading = true;
-      })
-      .addCase(fetchTrendingMovies.fulfilled, (state, action) => {
-        state.loading = false;
-        state.trendingMovies = action.payload;
         state.error = null;
       })
-      .addCase(fetchTrendingMovies.rejected, (state, action) => {
+      .addCase(fetchGenres.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error fetching trending movies";
+        state.genres = action.payload;
       })
+      .addCase(fetchGenres.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch genres';
+      })
+      // Fetch popular movies
       .addCase(fetchPopularMovies.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchPopularMovies.fulfilled, (state, action) => {
         state.loading = false;
         state.popularMovies = action.payload;
-        state.error = null;
       })
       .addCase(fetchPopularMovies.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error fetching popular movies";
+        state.error = action.error.message || 'Failed to fetch popular movies';
       })
-      .addCase(searchMoviesAsync.pending, (state) => {
+      // Fetch trending movies
+      .addCase(fetchTrendingMovies.pending, (state) => {
         state.loading = true;
       })
-      .addCase(searchMoviesAsync.fulfilled, (state, action) => {
+      .addCase(fetchTrendingMovies.fulfilled, (state, action) => {
         state.loading = false;
+        state.trendingMovies = action.payload;
+      })
+      .addCase(fetchTrendingMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch trending movies';
+      })
+      // Search movies
+      .addCase(searchMoviesAsync.fulfilled, (state, action) => {
         state.searchResults = action.payload;
       })
-      .addCase(searchMoviesAsync.rejected, (state, action) => {
+      .addCase(searchMoviesAsync.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.error.message || 'Failed to fetch search results';
+      })
+
+      .addCase(searchMoviesAsync.pending,(state)=>{
+        state.loading=true;
+      })
+      // Fetch movies by genre
+      .addCase(fetchMoviesByGenre.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchMoviesByGenre.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error fetching search results";
+        state.genreMovies = action.payload;
+      })
+      .addCase(fetchMoviesByGenre.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch movies by genre';
       });
   },
 });
 
-export const { addToWatchlist, removeFromWatchlist } = MovieSlice.actions;
-export default MovieSlice.reducer;
+// Export actions and reducer
+export const { addToWatchlist, removeFromWatchlist, setSelectedGenre } =
+  movieSlice.actions;
+
+export default movieSlice.reducer;
+
+

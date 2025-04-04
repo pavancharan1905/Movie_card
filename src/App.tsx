@@ -1,35 +1,64 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { CssBaseline, Box } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline, Box, Toolbar } from '@mui/material';
 import { Provider } from 'react-redux';
-
-import Navbar from './component/NavBar'; 
+import theme from './styles/theme';
 import { store } from './redux/store';
-import Home from './pages/Home';
 import Search from './pages/Search';
+import Home from './pages/Home';
+import Watchlist from './pages/Watchlist';
+import Navbar from './component/NavBar';
+import GenreDrawer from './component/GenreDrawer';
 
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import WatchList from './pages/Watchlist';
-
-const theme = createTheme();
+const drawerWidth = 240; // Must match the width set in GenreDrawer
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <CssBaseline /> {}
-        <BrowserRouter>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          {/* Navbar: fixed position to remain at the top */}
           <Navbar />
-          <Box sx={{ mt: 8 }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/watchlist" element={<WatchList />} />
-            </Routes>
+          <Box sx={{ display: 'flex', mt: 8 }}>
+            {/* Sidebar: GenreDrawer */}
+            <Box
+              component="aside"
+              sx={{
+                width: { xs: '100%', sm: `${drawerWidth}px` }, // Full width on small screens, fixed on larger
+                flexShrink: 0,
+                position: 'fixed',
+                top: '64px', // Move the drawer down to start below the navbar
+                height: 'calc(100vh - 64px)', // Subtract Navbar height
+                overflowY: 'auto',
+                borderRight: '1px solid #e0e0e0',
+                bgcolor: 'background.paper',
+              }}
+            >
+              <GenreDrawer />
+            </Box>
+
+            {/* Main Content: Adjust content area based on sidebar */}
+            <Box
+              component="main"
+              sx={{
+                flexGrow: 1,
+                ml: { sm: `${drawerWidth}px` }, // Leave space for the sidebar on larger screens
+                p: 3,
+              }}
+            >
+              <Toolbar /> {/* Adds space below the navbar for content */}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/watchlist" element={<Watchlist />} />
+              </Routes>
+            </Box>
           </Box>
-        </BrowserRouter>
-      </Provider>
-    </ThemeProvider>
+        </Router>
+      </ThemeProvider>
+    </Provider>
   );
 }
 
 export default App;
+
